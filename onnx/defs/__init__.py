@@ -3,8 +3,7 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
-import onnx
-import onnx.onnx_cpp2py_export.defs as C
+import onnx_cpp2py_export.defs as C  # type: ignore
 
 
 ONNX_DOMAIN = ""
