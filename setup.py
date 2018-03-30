@@ -10,7 +10,6 @@ import setuptools.command.build_py
 import setuptools.command.develop
 import setuptools.command.build_ext
 
-import platform
 import fnmatch
 from collections import namedtuple
 from contextlib import contextmanager
@@ -121,7 +120,6 @@ def md5(fname):
 
 
 true_or_die(PROTOC, 'Could not find "protoc" executable!')
-
 
 
 ################################################################################
@@ -282,7 +280,7 @@ class cmake_build(setuptools.Command):
                 '-DONNX_USE_MSVC_STATIC_RUNTIME=ON',
             ]
             if os.name == 'nt':
-                if 8*struct.calcsize("P") == 64:
+                if 8 * struct.calcsize("P") == 64:
                     # Temp fix for CI
                     # TODO: need a better way to determine generator
                     cmake_args.append('-DCMAKE_GENERATOR_PLATFORM=x64')
@@ -387,7 +385,7 @@ ext_modules = [
     setuptools.Extension(
         name=str('onnx_cpp2py_export'),
         sources=[])
-    ]
+]
 
 ################################################################################
 # Packages
