@@ -20,6 +20,7 @@ import shlex
 import shutil
 import subprocess
 import sys
+import struct
 import tempfile
 from textwrap import dedent
 import multiprocessing
@@ -273,10 +274,18 @@ class cmake_build(setuptools.Command):
             cmake_args = [
                 find_executable('cmake'),
                 '-DPYTHON_INCLUDE_DIR={}'.format(sysconfig.get_python_inc()),
+                '-DPY_VERSION={}'.format('{0}.{1}'.format(*sys.version_info[:2])),
+                '-DPYTHON_EXECUTABLE={}'.format(sys.executable),
                 '-DBUILD_PYTHON=ON'.format(sysconfig.get_python_inc()),
                 '-DCMAKE_EXPORT_COMPILE_COMMANDS=ON',
-                '-DONNX_NAMESPACE={}'.format(ONNX_NAMESPACE)
+                '-DONNX_NAMESPACE={}'.format(ONNX_NAMESPACE),
+                '-DONNX_USE_MSVC_STATIC_RUNTIME=ON',
             ]
+            if os.name == 'nt':
+                if 8*struct.calcsize("P") == 64:
+                    # Temp fix for CI
+                    # TODO: need a better way to determine generator
+                    cmake_args.append('-DCMAKE_GENERATOR_PLATFORM=x64')
             if ONNX_ML:
                 cmake_args.append('-DONNX_ML=1')
             if 'CMAKE_ARGS' in os.environ:
@@ -342,7 +351,16 @@ class build_ext(build_ext_parent):
             fullname = self.get_ext_fullname(ext.name)
             filename = self.get_ext_filename(fullname)
 
-            src = os.path.join(CMAKE_BUILD_DIR, filename)
+            lib_path = CMAKE_BUILD_DIR
+            if os.name == 'nt':
+                debug_lib_dir = os.path.join(lib_path, "Debug")
+                release_lib_dir = os.path.join(lib_path, "Release")
+                if os.path.exists(debug_lib_dir):
+                    lib_path = debug_lib_dir
+                elif os.path.exists(release_lib_dir):
+                    lib_path = release_lib_dir
+            src = os.path.join(lib_path, filename)
+
             if not os.path.exists(src):
                 del self.extensions[i]
             else:

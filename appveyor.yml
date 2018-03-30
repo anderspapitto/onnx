@@ -23,6 +23,10 @@ environment:
     CONDA_PREFIX: C:\Miniconda36
 
   - ONNX_ML: 1
+    ONNXPY_DIR: C:\Python36-x64
+    CONDA_PREFIX: C:\Miniconda36-x64
+
+  - ONNX_ML: 1
     ONNXPY_DIR: C:\Python35
     CONDA_PREFIX: C:\Miniconda35
 

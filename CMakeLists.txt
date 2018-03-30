@@ -236,7 +236,7 @@ if(BUILD_PYTHON)
     set_target_properties(onnx_cpp2py_export PROPERTIES LINK_FLAGS "-undefined dynamic_lookup")
     target_link_libraries(onnx_cpp2py_export PRIVATE -Wl,-force_load,$<TARGET_FILE:onnx>)
   elseif(MSVC)
-    # In MSVC, we will add whole archive in default.
+    # In MSVC, we will add whole archive in default
     target_link_libraries(onnx_cpp2py_export PRIVATE -WHOLEARCHIVE:$<TARGET_FILE:onnx>)
   else()
     # Assume everything else is like gcc
@@ -245,7 +245,7 @@ if(BUILD_PYTHON)
 
   target_link_libraries(onnx_cpp2py_export PRIVATE onnx)
 
-  if(WIN32)
+  if(MSVC)
     target_compile_options(onnx_cpp2py_export PRIVATE
         /MP
         /MX
@@ -273,7 +273,9 @@ endif()
 set(ONNX_INCLUDE_DIRS "${ONNX_ROOT}" "${CMAKE_CURRENT_BINARY_DIR}")
 set(ONNX_INCLUDE_DIRS ${ONNX_INCLUDE_DIRS} PARENT_SCOPE)
 
-if (WIN32)
+if (MSVC)
+    find_package(PythonLibs ${PY_VERSION} REQUIRED)
+    target_link_libraries(onnx_cpp2py_export PRIVATE ${PYTHON_LIBRARIES})
     target_compile_options(onnx_proto PRIVATE
         /MP
         /MX
