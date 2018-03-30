@@ -364,7 +364,7 @@ class build_ext(build_ext_parent):
             if not os.path.exists(src):
                 del self.extensions[i]
             else:
-                dst = os.path.join(os.path.realpath(self.build_lib), filename)
+                dst = os.path.join(os.path.realpath(self.build_lib), "onnx", filename)
                 self.copy_file(src, dst)
                 i += 1
 
