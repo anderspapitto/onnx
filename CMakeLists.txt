@@ -274,6 +274,7 @@ set(ONNX_INCLUDE_DIRS "${ONNX_ROOT}" "${CMAKE_CURRENT_BINARY_DIR}")
 set(ONNX_INCLUDE_DIRS ${ONNX_INCLUDE_DIRS} PARENT_SCOPE)
 
 if (MSVC)
+    find_package(PythonInterp ${PY_VERSION} REQUIRED)
     find_package(PythonLibs ${PY_VERSION} REQUIRED)
     target_link_libraries(onnx_cpp2py_export PRIVATE ${PYTHON_LIBRARIES})
     target_compile_options(onnx_proto PRIVATE
